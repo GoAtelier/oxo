@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/finecoding/oxopfork/internal/oxoweb"
+	"github.com/finecoding/oxopfork/oxo"
 )
 
 func main() {
 
-	board := oxoweb.Grid([]byte("X........"))
+	board := oxo.Grid([]byte("X........"))
 	fmt.Println(board)
 }
