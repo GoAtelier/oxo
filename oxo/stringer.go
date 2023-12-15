@@ -34,13 +34,15 @@ func (t Turn) String() string {
 // Returns a formatted string that can be printed be used by fmt to print a row of 3x3 grids on the terminal
 // With an extra line to hold the status of the Turn (XWIN, OWIN, DRAW, PLAY)
 func (g Game) String() string {
-	var l1, l2, l3, l4 string
+	var l1, l2, l3, l4, l5 string
 
-	for i, _ := range g {
-		l1 = l1 + string(g[i].Board[0]) + string(g[i].Board[1]) + string(g[i].Board[2]) + "    "
-		l2 = l2 + string(g[i].Board[3]) + string(g[i].Board[4]) + string(g[i].Board[5]) + "    "
-		l3 = l3 + string(g[i].Board[6]) + string(g[i].Board[7]) + string(g[i].Board[8]) + "    "
-		l4 = l4 + g[i].Status + "   "
+	for i, _ := range g.Turns {
+		l1 = l1 + string(g.Turns[i].Board[0]) + string(g.Turns[i].Board[1]) + string(g.Turns[i].Board[2]) + "    "
+		l2 = l2 + string(g.Turns[i].Board[3]) + string(g.Turns[i].Board[4]) + string(g.Turns[i].Board[5]) + "    "
+		l3 = l3 + string(g.Turns[i].Board[6]) + string(g.Turns[i].Board[7]) + string(g.Turns[i].Board[8]) + "    "
+		l4 = l4 + g.Turns[i].Status + "   "
+
 	}
-	return fmt.Sprintf("\n%s\n%s\n%s\n\n%s\n", l1, l2, l3, l4)
+	l5 = l5 + "Players: "+g.O.Name + " v " + g.X.Name
+	return fmt.Sprintf("\n%s\n%s\n%s\n\n%s\n\n%s\n", l1, l2, l3, l4, l5)
 }

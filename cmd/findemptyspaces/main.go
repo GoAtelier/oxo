@@ -27,7 +27,6 @@ func main() {
 	a, b = board.InPlay()
 
 	fmt.Printf("%v, %v", a, b)
-
 }
 
 // InPlay takes a board byte slice and returns a byte slice of empty positions
