@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/finecoding/oxopfork/oxo"
+	"github.com/finecoding/oxo-1/oxo"
 )
 
 // Note this is using a grid as a byte slice, so it is old.

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/finecoding/oxopfork/oxo"
+	"github.com/finecoding/oxo-1/oxo"
 )
 
 // This command introduces a String method to make the Game type printable using fmt.
