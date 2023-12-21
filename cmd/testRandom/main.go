@@ -7,11 +7,11 @@ import (
 )
 
 func main() {
-	a := oxo.Grid([]byte("OOOOOOO O"))
+	a := oxo.Grid([]byte("         "))
 	fmt.Println(len(a))
-	s, _ := a.InPlay()
-	fmt.Println(s)
-	fmt.Println(len(s))
+//	s, _ := a.InPlay()
+//	fmt.Println(s)
+//	fmt.Println(len(s))
 	fmt.Println("random selection")
 	fmt.Println(oxo.Random(a))
 	fmt.Println(oxo.Random(a))

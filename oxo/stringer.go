@@ -36,7 +36,7 @@ func (t Turn) String() string {
 func (g Game) String() string {
 	var l1, l2, l3, l4, l5 string
 
-	for i, _ := range g.Turns {
+	for i := range g.Turns {
 		l1 = l1 + string(g.Turns[i].Board[0]) + string(g.Turns[i].Board[1]) + string(g.Turns[i].Board[2]) + "    "
 		l2 = l2 + string(g.Turns[i].Board[3]) + string(g.Turns[i].Board[4]) + string(g.Turns[i].Board[5]) + "    "
 		l3 = l3 + string(g.Turns[i].Board[6]) + string(g.Turns[i].Board[7]) + string(g.Turns[i].Board[8]) + "    "
