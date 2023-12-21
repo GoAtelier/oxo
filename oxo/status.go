@@ -1,16 +1,14 @@
-
 // This is a standalone command used in development.
 // It uses concentric loops to iterate over every combination of states of a 3 x 3 grid containing either O, X or a space at each location
 // It creates one very large lookup table thats has a string of 9 characters representing the 3 x 3 grid as its key and a status string as its value
 // This will be tidied up an added to the oxo package, then used in the game loop to lookup the state of a game when the board is updated
 // after each turn taken by a player.
 // It detects O win, X win, a draw or an illegal board state.
- 
+//
 
-package main
+package oxo
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -25,13 +23,15 @@ func convert(j int) string {
 	}
 	return "?"
 }
+
 // Transpose takes the byte slice version of the string representing the 3 x 3 grid and transposes it
-// to make it easier usable by a string.Contains function 
+// to make it easier usable by a string.Contains function
 func transpose(sb []byte) string {
 
 	return string(sb[0]) + string(sb[3]) + string(sb[6]) + string(sb[1]) + string(sb[4]) + string(sb[7]) + string(sb[2]) + string(sb[5]) + string(sb[8])
 
 }
+
 // Markstatus takes a nine character string and returns a string that indicates the status of the game
 // The alternatives are "XWIN", "OWIN", "DRAW" or "ILLEGAL"
 func markstatus(s string) string {
@@ -41,10 +41,20 @@ func markstatus(s string) string {
 	X := byte(x)
 	sb := []byte(s)
 	r := "ERROR"
-// For some tests it is easier examine the string as a slice of bytes, for others we can use the string package functions
-// s for the string verions, sb for the byte slice version
+	// For some tests it is easier examine the string as a slice of bytes, for others we can use the string package functions
+	// s for the string verions, sb for the byte slice version
+
+	if strings.Contains(s, " ") {
+		r = "PLAY"
+	}
+
+	// Note a draw means each of the 9 locations have either a O or an X.  So that is 2 power 9 = 512 permutations
+	if strings.Count(s, " ") == 0 {
+		r = "DRAW"
+	}
 
 	switch {
+
 	case sb[0] == X && sb[1] == X && sb[2] == X: //top row
 		r = "XWIN"
 		fallthrough
@@ -94,40 +104,43 @@ func markstatus(s string) string {
 	case sb[2] == O && sb[4] == O && sb[6] == O:
 		r = "OWIN"
 	}
-	// If there are no spaces left, it is a draw
-	if !strings.Contains(s, " ") {
-		r = "DRAW"
-	}
-	// These are the illegal game states.  There can only be a difference of 1 between the number of X's and O's
-	
-	if  (strings.Count(s, "X") - strings.Count(s, "O")) > 1 {
-		r = "ERROR"
-	}
-	if  (strings.Count(s, "O") - strings.Count(s, "X")) > 1 {
 
-		r = "ERROR"
-	}	
-    // More illegal states
+	// Illegal states
 	// If there is both row of three X's and a line three O's.
 	// One or the other would win before this state could exist, so is it illegal
-	if strings.Contains(s, "XXX") && strings.Contains(s, "OOO") {
+	switch {
+	case sb[0] == O && sb[1] == O && sb[2] == O && sb[3] == X && sb[4] == X && sb[5] == X:
+		r = "ERROR"
+		fallthrough
+	case sb[0] == X && sb[1] == X && sb[2] == X && sb[3] == O && sb[4] == O && sb[5] == O:
+		r = "ERROR"
+		fallthrough
+	case sb[3] == O && sb[4] == O && sb[5] == O && sb[6] == X && sb[7] == X && sb[8] == X:
+		r = "ERROR"
+		fallthrough
+	case sb[3] == X && sb[4] == X && sb[5] == X && sb[6] == O && sb[7] == O && sb[8] == O:
+		r = "ERROR"
+
+	}
+
+	// More illegal game states.  There can only be a difference of 1 between the number of X's and O's
+
+	if (strings.Count(s, "X") - strings.Count(s, "O")) > 1 {
 		r = "ERROR"
 	}
-	// In order to use the same for columns and use this strings.Contains function, we need to transpose the string
-	st := transpose(sb)
+	if (strings.Count(s, "O") - strings.Count(s, "X")) > 1 {
 
-	if strings.Contains(st, "XXX") && strings.Contains(st, "OOO") {
 		r = "ERROR"
-
 	}
+
 	return r
 }
 
-func main() {
+func Newlookup() map[string]string {
 
 	//This is our big lookup table for all combinations of a 3 x 3 grid where each position contains either an X, O or space
 	//That is 3 to the power 9 = 19685 permutations
-    
+
 	lookup := make(map[string]string)
 
 	//p is the position in a nine character string
@@ -146,7 +159,7 @@ func main() {
 										{
 											s := convert(p0) + convert(p1) + convert(p2) + convert(p3) + convert(p4) + convert(p5) + convert(p6) + convert(p7) + convert(p8)
 											// s holds a nine character string which becomes the key
-											// function markstatus derives the state of the game we assign it to the value 
+											// function markstatus derives the state of the game we assign it to the value
 											lookup[s] = markstatus(s)
 
 										}
@@ -160,28 +173,30 @@ func main() {
 			}
 		}
 	}
+	return lookup
+}
+
 /* 	Counting the board states of the lookup table map
-	Total 19683
-	XWIN 896 
-	OWIN 896 
-	DRAW 132 
-	ILLEGAL 17759 
-	SUM 19683 */
+Total 19683
+XWIN 896
+OWIN 896
+DRAW 132
+ILLEGAL 17759
+SUM 19683
 
-	xwins, owins, draws, illegal := 0, 0, 0, 0
-	for _, value := range lookup {
-		switch value {
-		case "ERROR":
-			illegal++
-		case "XWIN":
-			xwins++
-		case "OWIN":
-			owins++
-		case "DRAW":
-			draws++
-		}
-
+xwins, owins, draws, illegal := 0, 0, 0, 0
+for _, value := range lookup {
+	switch value {
+	case "ERROR":
+		illegal++
+	case "XWIN":
+		xwins++
+	case "OWIN":
+		owins++
+	case "DRAW":
+		draws++
 	}
-	fmt.Printf("Total %d\nXWIN %d \nOWIN %d \nDRAW %d \nILLEGAL %d \nSUM %d\n", len(lookup), xwins, owins, draws, illegal, xwins+owins+illegal+draws)
 
 }
+fmt.Printf("Total %d\nXWIN %d \nOWIN %d \nDRAW %d \nILLEGAL %d \nSUM %d\n", len(lookup), xwins, owins, draws, illegal, xwins+owins+illegal+draws)
+*/

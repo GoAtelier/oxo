@@ -44,9 +44,8 @@ type Player struct {
 // Findspaces finds the spaces on the Grid and Random choses one....randomly
 func Random(g Grid) int {
 	spc, _ := g.FindSpaces()
-		return int(spc[randInt(0, len(spc))])
-	}
-
+	return int(spc[randInt(0, len(spc))])
+}
 
 // randInt choses a random number between two values
 func randInt(min, max int) int {
