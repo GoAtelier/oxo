@@ -4,6 +4,7 @@
 // This will be tidied up an added to the oxo package, then used in the game loop to lookup the state of a game when the board is updated
 // after each turn taken by a player.
 // It detects O win, X win, a draw or an illegal board state.
+//
 
 package oxo
 
