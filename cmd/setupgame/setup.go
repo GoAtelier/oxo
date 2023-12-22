@@ -42,7 +42,7 @@ func main() {
 	g.X.Name = "RANDOM"
 
 	// Now we need to find the state of the Game at any turn.  Do this by using the lookup table calculated in status.go
-	findstate := oxo.Newlookup()
+	findstate,_ := oxo.Newlookup()
 	// flip between O and X
 	var flip bool
 	// Game loop.  It is never going to be more than 9 turns.  A minimum Game is 5 Turns
