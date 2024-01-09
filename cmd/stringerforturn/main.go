@@ -8,10 +8,12 @@ import (
 
 func main() {
 
-	fmt.Println("Printing a Board...")
+	fmt.Println("Printing a Turn: ")
 
-	var board = oxo.Grid([]byte("   OOOXXX"))
-
+	var turn = oxo.Turn{
+		Board:  [9]byte([]byte("   OOOXXX")),
+		Status: "PLAY",
+	}
 	//Here we have a 9 byte array created from a byte slice created by converting a string literal
 	//Note, I could have done this anonymously using the [9]byte([]byte("XXXOOOXXX")) instead of grid([]byte("XXXOOOXXX"))
 	//But the named type grid will come in useful later when I want to write some methods around it.
@@ -30,6 +32,6 @@ func main() {
 	// I could make that String method much more elaborate, for example put it all in a little line grid.
 	// However. I will save that until we print out a whole game across the terminal!
 	fmt.Println()
-	fmt.Printf("%s", board)
-
+	fmt.Printf("%s%s", turn.Board, turn.Status)
+	fmt.Println()
 }

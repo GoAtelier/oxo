@@ -1,0 +1,167 @@
+/*  This is a new approach to finding the state a 3x3 board using a lookup table of all 19,683 permutations of X,O or space.
+ It will require  map of type [string]byte and the byte will encode four status flags for LEGAL, XWIN, OWIN and SPACES
+ These flags will be set by functions that iterate across the whole map looking form illegal patterns, winning lines and whether there are spaces.
+ From the four flags we can derive the following truth table:
+
+LEGAL	XWIN	OWIN	SPACES		state
+0		0		0		0			DRAW
+0		0		0		1			PLAY
+0		0		1		0			OWIN		
+0		0		1		1			OWIN
+0		1		0		0			XWIN
+0		1		0		1			XWIN
+0		1		1		0			ILLEGAL
+0		1		1		1			ILLEGAL
+1		0		0		1			ILLEGAL
+1		0		1		0			ILLEGAL
+1		0		1		1			ILLEGAL
+1		1		0		0			ILLEGAL
+1		1		0		1			ILLEGAL
+1		1		1		0			ILLEGAL
+1		1		1		1			ILLEGAL 
+
+With the above flags set we can create a second map of type [Grid] string
+The key, Grid, already exists and is an array [9]byte and the value will be string shown above. 
+
+This two stage solution traps difficult to detect exceptions by listing all possible flag states and then assign at state. 
+
+Eg. 
+When a Grid contains a line or X's and a line of O's, which is illegal because in consequtive turns one will win and exit the game loop.
+When a Grid contains no spaces (which might be a DRAW), but with a winning X line or winning O line which takes precedence.
+
+We will populate a string[byte] map by testing string with functions that set flags.
+
+We need functions for LEGAL, XWIN, OWIN and SPACES.  These have already been developed in status.go
+
+Then we create a secondary lookup table [GRID]string by iterating over the first map and using a case switch 
+to test the flag combinations above and set the status string.
+*/
+type Stateflags uint8
+type flags uint8
+
+const (
+    isLegal = Stateflags 1 << iota
+	isXwin
+	isOwin
+	isInplay
+	flag0000 = flags 1 << iota
+    flag0001
+	flag0010
+	flag0011
+    flag0100
+	flag0101
+	flag0110
+    flag0111
+	flag1000
+    flag1001
+	flag1010
+	flag1011
+    flag1100
+	flag1101
+	flag1110
+    flag1111
+
+)  
+fmt.Printf("flag0000         %08b\n", flag0000)
+fmt.Printf("flag0001        %08b\n", flag0001)
+fmt.Printf("flag0010        %08b\n", flag0010)
+fmt.Printf("flag0011         %08b\n", flag0011)
+
+fmt.Printf("flag0100         %08b\n", flag0100)
+fmt.Printf("flag0101         %08b\n", flag0101)
+fmt.Printf("flag0110        %08b\n", flag0110)
+fmt.Printf("flag0111         %08b\n", flag0111)
+
+fmt.Printf("flag1000         %08b\n", flag1000)
+fmt.Printf("flag1001        %08b\n", flag1001)
+fmt.Printf("flag1010        %08b\n", flag1010)
+fmt.Printf("flag1011         %08b\n", flag1011)
+
+fmt.Printf("flag1100         %08b\n", flag1100)
+fmt.Printf("flag1101        %08b\n", flag1101)
+fmt.Printf("flag1110        %08b\n", flag1110)
+fmt.Printf("flag1111         %08b\n", flag1111)
+
+fmt.Printf("isLegal         %08b\n", isLegal)
+fmt.Printf("isOwin         %08b\n", isXwin)
+fmt.Printf("isXwin         %08b\n", isOwin
+fmt.Printf("isInplay         %08b\n", isInplay)
+
+fmt.Println("Hi")
+
+
+func convert(j int) string {
+	switch j {
+	case 0:
+		return "O"
+	case 1:
+		return "X"
+	case 2:
+		return " "
+	}
+	return "?"
+}
+
+func Newlookup() (map[string]string, map[string]string) {
+
+	//This is our big lookup table for all combinations of a 3 x 3 grid where each position contains either an X, O or space
+	//That is 3 to the power 9 = 19685 permutations
+
+	legallookup := make(map[string]string)
+	illegallookup := make(map[string]string)
+
+	//p is the position in a nine character string
+	//to create 19685 strings we iterate using numbers 0 to 2 to represent the three values.
+	//then use the convert function to return a string 0="O", 1="X" and 2=" "
+	for p0 := 0; p0 < 3; p0++ {
+		for p1 := 0; p1 < 3; p1++ {
+			for p2 := 0; p2 < 3; p2++ {
+				for p3 := 0; p3 < 3; p3++ {
+					for p4 := 0; p4 < 3; p4++ {
+						for p5 := 0; p5 < 3; p5++ {
+							for p6 := 0; p6 < 3; p6++ {
+								for p7 := 0; p7 < 3; p7++ {
+
+									for p8 := 0; p8 < 3; p8++ {
+										{
+											s := convert(p0) + convert(p1) + convert(p2) + convert(p3) + convert(p4) + convert(p5) + convert(p6) + convert(p7) + convert(p8)
+											// s holds a nine character string which becomes the key
+											// function markstatus derives the state of the game we assign it to the value
+
+											if legality(s) == "LEGAL" {
+												legallookup[s] = legality(s)
+											} else {
+												illegallookup[s] = legality(s)
+											}
+										}
+									}
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return addstate(legallookup), illegallookup
+}
+
+
+
+
+
+
+
+package oxo
+
+import (
+	
+	"fmt"
+)
+
+func test ()
+{
+	fmt.Println("Hello")
+}

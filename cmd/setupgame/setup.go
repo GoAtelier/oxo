@@ -10,26 +10,11 @@ func main() {
 
 	/*  Setting up a game.
 
-	type Game struct {
-		Turns  []Turn
-		X      Player
-		O      Player
-		Result string
-
-		type Turn struct {
-		Board  Grid
-		Status string
-	}
-	type Player struct {
-		Name   string
-		Tactic func(Grid) int
-		Rank   int
-
 	A Game contains a slice of Turns. A Turn contains the 3 x 3 board in Grid.
 	We need to configure Player X and O each with a Tactic function.
 
 	Start by appending a Turn with one empty Grid onto the Game
-	The Player names are a long form version.
+	We only have one Player at the moment that just chooses and empty space at random.
 
 	*/
 
@@ -42,7 +27,7 @@ func main() {
 	g.X.Name = "RANDOM"
 
 	// Now we need to find the state of the Game at any turn.  Do this by using the lookup table calculated in status.go
-	findstate,_ := oxo.Newlookup()
+	findstate := oxo.Newlookup()
 	// flip between O and X
 	var flip bool
 	// Game loop.  It is never going to be more than 9 turns.  A minimum Game is 5 Turns
@@ -57,11 +42,14 @@ func main() {
 			g.Turns[turn].Board[pos] = byte(88) //X
 		}
 
-		//Convert the Board, which is a 9 byte slice into a string
-		stb := [9]byte(g.Turns[turn].Board)
-		str := string([]byte(stb[:]))
-		//find the state of the game using the lookup table and update the Status field of the Turn
-		g.Turns[turn].Status = findstate[str]
+		//Convert the Board, which is a 9 byte array into a slice and into a string
+		//using the Grid2string method on Grid.
+		//Thi uses findstates function that uses the big lookup map to find a string holding the state of the board.
+		//This state string is used to update the status field for this Turn in the Game.
+		//The status is used immediately to exit the loop if the state of the board is no longer in play following the player
+		//updating the board with their move.
+
+		g.Turns[turn].Status = findstate[g.Turns[turn].Board.Grid2string()]
 		//If the Status is not in Play, the Game is over and we exit the loop
 		if g.Turns[turn].Status != "PLAY" {
 			break

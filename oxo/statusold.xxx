@@ -1,0 +1,232 @@
+// This is a standalone command used in development.
+// It uses concentric loops to iterate over every combination of states of a 3 x 3 grid containing either O, X or a space at each location
+// It creates one very large lookup table thats has a string of 9 characters representing the 3 x 3 grid as its key and a status string as its value
+// This will be tidied up an added to the oxo package, then used in the game loop to lookup the state of a game when the board is updated
+// after each turn taken by a player.
+// It detects O win, X win, a draw or an illegal board state.
+package oxo
+
+import (
+	"strings"
+)
+
+type GameStateflags uint8
+
+const (
+	Zero GameStateflags = 0
+	IsInplay GameStateflags = 1 << iota
+	IsOwin
+	IsXwin
+	IsLegal
+	//naming the GameStateflags - capitalisation indicates the state of the flag l = legal, x = xwin, o = owin, p=in play
+	lxop0000 GameStateflags = iota //ILLEGAL
+	lxoP0001                       //ILLEGAL
+	lxOp0010                       //ILLEGAL
+	lxOP0011                       //ILLEGAL
+	lXop0100                       //ILLEGAL
+	lXoP0101                       //ILLEGAL
+	lXOp0110                       //ILLEGAL
+	lXOP0111                       //ILLEGAL
+	Lxop1000                       //DRAW  Legal board Neither O or X win and game is full
+	LxoP1001                       //PLAY  Legal board Neither O or X win and game is in play
+	LxOp1010                       //OWIN  Legal board OWins and game is full
+	LxOP1011                       //OWIN  Legal board OWins and game is in play
+	LXop1100                       //XWIN  Legal board XWins and game is full
+	LXoP1101                       //XWIN  Legal board XWins and game is in play
+	LXOp1110                       //ERROR Legal board but has both X AND O winning lines and is full
+	LXOP1111                       //ERROR Legal board but has both X and O winning line and is in play
+
+)
+
+func Set(b, flag GameStateflags) GameStateflags    { return b | flag }
+func Clear(b, flag GameStateflags) GameStateflags  { return b &^ flag }
+func Toggle(b, flag GameStateflags) GameStateflags { return b ^ flag }
+func Has(b, flag GameStateflags) bool              { return b&flag != 0 }
+
+func SetXwin(s string) GameStateflags {
+	var r GameStateflags
+	x := 88
+	X := byte(x)
+	sb := []byte(s)
+	switch {
+
+	case sb[0] == X && sb[1] == X && sb[2] == X: //top row
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[3] == X && sb[4] == X && sb[5] == X: //middle row
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[6] == X && sb[7] == X && sb[8] == X: //bottom row
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[0] == X && sb[3] == X && sb[6] == X: //first col
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[1] == X && sb[4] == X && sb[7] == X: //second col
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[2] == X && sb[5] == X && sb[8] == X: //third col
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[0] == X && sb[4] == X && sb[8] == X: //left diag
+		r = Set(r, IsXwin)
+		fallthrough
+	case sb[2] == X && sb[4] == X && sb[6] == X: //right diag
+		r = Set(r, IsXwin)
+
+	}
+	return r
+}
+func SetPlay(sb string) GameStateflags {
+	var r GameStateflags
+	if strings.Contains(sb, " ") {
+		r = Set(r, IsInplay)
+
+	}
+	return r
+}
+
+func SetOwin(s string) GameStateflags {
+	var r GameStateflags
+	o := 79
+	O := byte(o)
+	sb := []byte(s)
+	switch {
+	case sb[0] == O && sb[1] == O && sb[2] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[3] == O && sb[4] == O && sb[5] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[6] == O && sb[7] == O && sb[8] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[0] == O && sb[3] == O && sb[6] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[1] == O && sb[4] == O && sb[7] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[2] == O && sb[5] == O && sb[8] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[0] == O && sb[4] == O && sb[8] == O:
+		r = Set(r, IsOwin)
+		fallthrough
+	case sb[2] == O && sb[4] == O && sb[6] == O:
+		r = Set(r, IsOwin)
+	}
+
+	return r
+}
+
+func SetLegal(s string) GameStateflags {
+
+	var r GameStateflags
+	// More illegal game states.  There can only be a difference of 1 between the number of X's and O's
+	r = Set(r, IsLegal)
+	if (strings.Count(s, "X") - strings.Count(s, "O")) > 1 {
+		r = Clear(r, IsLegal)
+
+	} else if (strings.Count(s, "O") - strings.Count(s, "X")) > 1 {
+		r = Clear(r, IsLegal)
+	}
+	return r
+
+}
+
+func convert(j int) string {
+	switch j {
+	case 0:
+		return "O"
+	case 1:
+		return "X"
+	case 2:
+		return " "
+	}
+	return "?"
+}
+
+func createlookup(gs GameStateflags, gsl map[string]string, s string) {
+
+	switch gs {
+	case lxop0000:
+		gsl[s] = "ILLEGAL-lxop0000"
+	case lxoP0001:
+		gsl[s] = "ILLEGAL-lxoP0001" //ILLEGAL
+	case lxOp0010:
+		gsl[s] = "ILLEGAL-lxOp0010" //ILLEGAL
+	case lxOP0011:
+		gsl[s] = "ILLEGAL-lxOP0011" //ILLEGAL
+	case lXop0100:
+		gsl[s] = "ILLEGAL-lXop0100" //ILLEGAL
+	case lXoP0101:
+		gsl[s] = "ILLEGAL-lXoP0101" //ILLEGAL
+	case lXOp0110:
+		gsl[s] = "ILLEGAL-lXOp0110" //ILLEGAL
+	case lXOP0111:
+		gsl[s] = "ILLEGAL-lXOP0111" //ILLEGAL
+	case Lxop1000:
+		gsl[s] = "DRAW-Lxop100" //DRAW  Legal board Neither O or X win and game is full
+	case LxoP1001:
+		gsl[s] = "PLAY-LxoP100" //PLAY  Legal board Neither O or X win and game is in play
+	case LxOp1010:
+		gsl[s] = "OWIN-LxOp1010" //OWIN  Legal board OWins and game is full
+	case LxOP1011:
+		gsl[s] = "OWIN-LxOP101" //OWIN  Legal board OWins and game is in play
+	case LXop1100:
+		gsl[s] = "XWIN-LXop1100" //XWIN  Legal board XWins and game is full
+	case LXoP1101:
+		gsl[s] = "XWIN-LXoP1101" //XWIN  Legal board XWins and game is in play
+	case LXOp1110:
+		gsl[s] = "ERROR-LXOp1110" //ERROR Legal board but has both X AND O winning lines and is full
+	case LXOP1111:
+		gsl[s] = "ERROR-LXOP1111" //ERROR L
+
+	}
+	return
+}
+
+func Newlookup() map[string]string {
+
+	//This is our big lookup table for all combinations of a 3 x 3 grid where each position contains either an X, O or space
+	//That is 3 to the power 9 = 19685 permutations
+
+	gsl := make(map[string]string)
+
+	//	AllStateLookup := make(map[string]string)
+	//var r GameStateflags
+
+	//p is the position in a nine character string
+	//to create 19685 strings we iterate using numbers 0 to 2 to represent the three values.
+	//then use the convert function to return a string 0="O", 1="X" and 2=" "
+	for p0 := 0; p0 < 3; p0++ {
+		for p1 := 0; p1 < 3; p1++ {
+			for p2 := 0; p2 < 3; p2++ {
+				for p3 := 0; p3 < 3; p3++ {
+					for p4 := 0; p4 < 3; p4++ {
+						for p5 := 0; p5 < 3; p5++ {
+							for p6 := 0; p6 < 3; p6++ {
+								for p7 := 0; p7 < 3; p7++ {
+
+									for p8 := 0; p8 < 3; p8++ {
+										{
+											s := convert(p0) + convert(p1) + convert(p2) + convert(p3) + convert(p4) + convert(p5) + convert(p6) + convert(p7) + convert(p8)
+											// s holds a nine character string which becomes the s
+											// function markstatus derives the state of the game we assign it to the value
+											gs := SetXwin(s) | SetOwin(s) | SetLegal(s) | SetPlay(s)
+											createlookup(gs, gsl, s)
+										}
+									}
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return gsl
+}
