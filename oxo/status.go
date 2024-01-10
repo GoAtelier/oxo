@@ -4,14 +4,13 @@ import (
 	"strings"
 )
 
-//These functions examine a string representation of the 3 x 3 board and derive its Gamestate
+//Setxxxx functions examine a string representation of the 3 x 3 board and derive its Gamestate
 //The Gamestate is single byte and the state is one of four bit positions defined by constants IsXwin,IsOwin, IsInplay and IsLegal
-//These will be used to compose Gamestateclass. 
+//These will be used to compose Gamestateclass.
 
 func SetXwin(s string) GameState {
 	var r GameState
-	X := byte(88)
-	//Convert to bytes to access the index
+
 	sb := []byte(s)
 	switch {
 
@@ -53,7 +52,6 @@ func SetPlay(sb string) GameState {
 
 func SetOwin(s string) GameState {
 	var r GameState
-	O := byte(79)
 	//Convert to bytes to access the index
 	sb := []byte(s)
 	switch {
