@@ -6,6 +6,8 @@ type GameStateclass uint8 //Holds 16 permutations of 4 GameStates
 
 type GameState uint8 //Holds 4 GameStates OWIN,XWIN,INPLAY and LEGAL
 
+type Gridpos uint8 //Holds the position in a 3x3 grid from topleft 0 to bottom right 8
+
 // These are the 4 GameStates, a Board can have multiple GameStates
 const (
 	IsInplay GameState = 1 << iota
@@ -38,8 +40,26 @@ const (
 	O = byte(79)
 	S = byte(32)
 )
+const (
+	Tl Gridpos = iota //Topleft = 0
+	Tc                //Topcentre
+	Tr                //Toperight
+	Ml                //Midleft
+	Mc                //Midcentre
+	Mr                //Midright
+	Bl                //Bottomleft
+	Bc                //Bottomcentre
+	Br                //Bottomright =8
+)
 
 // board represents the state of a turn of the game on a 3 x 3 grid
+
+type Player struct {
+	Name   string
+	Tactic func(Grid) int //Tactic function for this player.
+	Rank   int
+}
+
 type Grid [9]byte
 
 // a turn has a board and status string which will be one of these strings XWIN,OWIN,DRAW,PLAY
@@ -57,6 +77,18 @@ type Game struct {
 	Result string
 }
 
+type Result struct {
+	Games []Game
+}
+
+type Lookup map[string]string
+
+type Tacticfunc func(Grid) int
+
+
+
+
+
 func (board Grid) FindSpaces() ([]byte, bool) {
 	var spc []byte
 	for k, v := range board {
@@ -67,8 +99,3 @@ func (board Grid) FindSpaces() ([]byte, bool) {
 	return spc, len(spc) != 0
 }
 
-type Player struct {
-	Name   string
-	Tactic func(Grid) int //Tactic function for this player.
-	Rank   int
-}

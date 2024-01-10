@@ -72,7 +72,7 @@ func (g Game) String() string {
 		l8 = l8 + g.Turns[i].Status + "         "
 
 	}
-	l9 = l9 + "Players: " + g.O.Name + " v " + g.X.Name
+	l9 = l9 + "Players: " + g.O.Name + " (O) v (X) " + g.X.Name
 
 	return fmt.Sprintf("\n\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n     %s\n\n                 %s\n", l1, l2, l3, l4, l5, l6, l7, l8, l9)
 
