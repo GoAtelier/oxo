@@ -18,27 +18,27 @@ func randInt(min, max int) int {
 
 // Centre tactic selects the centre square if it is a space. Otherwise it randomly selects any other empty location
 func Centre(g Grid) int {
-	if g[4] == S {
+	if g[Mc] == S {
 		return 4
 	} else {
 		return Random(g)
 	}
 }
-
+//Note the use of constants for grid positions in the 3 x 3 board.  Tl=Topright=0, Tc=Topcentre=1, Tr=Topright=2....see types.go 
 // Corner tactic selects any vacant corner otherwise it randomly selects any other empty location
 func Corner(g Grid) int {
 
 	switch {
-	case g[0] == S:
+	case g[Tl] == S:
 		return 0
 		fallthrough
-	case g[2] == S:
+	case g[Tr] == S:
 		return 2
 		fallthrough
-	case g[6] == S:
+	case g[Bl] == S:
 		return 6
 		fallthrough
-	case g[8] == S:
+	case g[Br] == S:
 		return 8
 		fallthrough
 	default:
@@ -50,90 +50,90 @@ func CompleteOLine(g Grid) int {
     r:=9
 	switch {
 	//top row
-	case (g[0] == O && g[1] == O) && g[2] == S:
+	case (g[Tl] == O && g[Tc] == O) && g[Tr] == S:
 		r = 2
 		fallthrough
-	case (g[1] == O && g[2] == O) && g[0] == S:
+	case (g[Tc] == O && g[Tr] == O) && g[Tl] == S:
 		r = 0
 		fallthrough
-	case (g[0] == O && g[2] == O) && g[1] == S:
+	case (g[Tl] == O && g[Tr] == O) && g[Tc] == S:
 		r = 1
 		fallthrough
 
 		//mid row
-	case (g[3] == O && g[4] == O) && g[5] == S:
+	case (g[Ml] == O && g[Mc] == O) && g[Mr] == S:
 		r = 5
 		fallthrough
-	case (g[3] == O && g[5] == O) && g[4] == S:
+	case (g[Ml] == O && g[Mr] == O) && g[Mc] == S:
 		r = 4
 		fallthrough
-	case (g[4] == O && g[5] == O) && g[3] == S:
+	case (g[Mc] == O && g[Mr] == O) && g[Ml] == S:
 		r = 3
 		fallthrough
 
 		//bottom row
-	case (g[6] == O && g[7] == O) && g[8] == S:
+	case (g[Bl] == O && g[Bc] == O) && g[Br] == S:
 		r = 8
 		fallthrough
-	case (g[7] == O && g[8] == O) && g[6] == S:
+	case (g[Bc] == O && g[Br] == O) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[6] == O && g[8] == O) && g[7] == S:
+	case (g[Bl] == O && g[Br] == O) && g[Bc] == S:
 		r = 7
 		fallthrough
 
 		//left col
-	case (g[0] == O && g[3] == O) && g[6] == S:
+	case (g[Tl] == O && g[Ml] == O) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[0] == O && g[6] == O) && g[3] == S:
+	case (g[Tl] == O && g[Bl] == O) && g[Ml] == S:
 		r = 3
 		fallthrough
-	case (g[3] == O && g[6] == O) && g[0] == S:
+	case (g[Ml] == O && g[Bl] == O) && g[Tl] == S:
 		r = 0
 		fallthrough
 
 		//mid col
-	case (g[1] == O && g[4] == O) && g[7] == S:
+	case (g[Tc] == O && g[Mc] == O) && g[Bc] == S:
 		r = 7
 		fallthrough
-	case (g[4] == O && g[7] == O) && g[1] == S:
+	case (g[Mc] == O && g[Bc] == O) && g[Tc] == S:
 		r = 1
 		fallthrough
-	case (g[1] == O && g[7] == O) && g[4] == S:
+	case (g[Tc] == O && g[Bc] == O) && g[Mc] == S:
 		r = 4
 		fallthrough
 
 		// right col
-	case (g[2] == O && g[5] == O) && g[8] == S:
+	case (g[Tr] == O && g[Mr] == O) && g[Br] == S:
 		r = 8
 		fallthrough
-	case (g[2] == O && g[8] == O) && g[5] == S:
+	case (g[Tr] == O && g[Br] == O) && g[Mr] == S:
 		r = 5
 		fallthrough
-	case (g[5] == O && g[8] == O) && g[2] == S:
+	case (g[Mr] == O && g[Br] == O) && g[Tr] == S:
 		r = 2
 		fallthrough
 
 		// top left diag
-	case (g[0] == O && g[4] == O) && g[7] == S:
+	case (g[Tl] == O && g[Mc] == O) && g[Bc] == S:
 		r = 7
 		fallthrough
-	case (g[4] == O && g[7] == O) && g[0] == S:
+	case (g[Mc] == O && g[Bc] == O) && g[Tl] == S:
 		r = 0
 		fallthrough
-	case (g[0] == O && g[7] == O) && g[4] == S:
+	case (g[Tl] == O && g[Bc] == O) && g[Mc] == S:
 		r = 4
 		fallthrough
 
 		// top right diag
-	case (g[2] == O && g[4] == O) && g[6] == S:
+	case (g[Tr] == O && g[Mc] == O) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[2] == O && g[6] == O) && g[4] == S:
+	case (g[Tr] == O && g[Bl] == O) && g[Mc] == S:
 		r = 4
 		fallthrough
-	case (g[4] == O && g[6] == O) && g[2] == S:
+	case (g[Mc] == O && g[Bl] == O) && g[Tr] == S:
 		r = 2
 
 	default:
@@ -146,90 +146,90 @@ func CompleteXLine(g Grid) int {
 	r:=9
 	switch {
 	//top row
-	case (g[0] == X && g[1] == X) && g[2] == S:
+	case (g[Tl] == X && g[Tc] == X) && g[Tr] == S:
 		r = 2
 		fallthrough
-	case (g[1] == X && g[2] == X) && g[0] == S:
+	case (g[Tc] == X && g[Tr] == X) && g[Tl] == S:
 		r = 0
 		fallthrough
-	case (g[0] == X && g[2] == X) && g[1] == S:
+	case (g[Tl] == X && g[Tr] == X) && g[Tc] == S:
 		r = 1
 		fallthrough
 
 		//mid row
-	case (g[3] == X && g[4] == X) && g[5] == S:
+	case (g[Ml] == X && g[Mc] == X) && g[Mr] == S:
 		r = 5
 		fallthrough
-	case (g[3] == X && g[5] == X) && g[4] == S:
+	case (g[Ml] == X && g[Mr] == X) && g[Mc] == S:
 		r = 4
 		fallthrough
-	case (g[4] == X && g[5] == X) && g[3] == S:
+	case (g[Mc] == X && g[Mr] == X) && g[Ml] == S:
 		r = 3
 		fallthrough
 
 		//bottom row
-	case (g[6] == X && g[7] == X) && g[8] == S:
+	case (g[Bl] == X && g[Bc] == X) && g[Br] == S:
 		r = 8
 		fallthrough
-	case (g[7] == X && g[8] == X) && g[6] == S:
+	case (g[Bc] == X && g[Br] == X) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[6] == X && g[8] == X) && g[7] == S:
+	case (g[Bl] == X && g[Br] == X) && g[Bc] == S:
 		r = 7
 		fallthrough
 
 		//left col
-	case (g[0] == X && g[3] == X) && g[6] == S:
+	case (g[Tl] == X && g[Ml] == X) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[0] == X && g[6] == X) && g[3] == S:
+	case (g[Tl] == X && g[Bl] == X) && g[Ml] == S:
 		r = 3
 		fallthrough
-	case (g[3] == X && g[6] == X) && g[0] == S:
+	case (g[Ml] == X && g[Bl] == X) && g[Tl] == S:
 		r = 0
 		fallthrough
 
 		//mid col
-	case (g[1] == X && g[4] == X) && g[7] == S:
+	case (g[Tc] == X && g[Mc] == X) && g[Bc] == S:
 		r = 7
 		fallthrough
-	case (g[4] == X && g[7] == X) && g[1] == S:
+	case (g[Mc] == X && g[Bc] == X) && g[Tc] == S:
 		r = 1
 		fallthrough
-	case (g[1] == X && g[7] == X) && g[4] == S:
+	case (g[Tc] == X && g[Bc] == X) && g[Mc] == S:
 		r = 4
 		fallthrough
 
 		// right col
-	case (g[2] == X && g[5] == X) && g[8] == S:
+	case (g[Tr] == X && g[Mr] == X) && g[Br] == S:
 		r = 8
 		fallthrough
-	case (g[2] == X && g[8] == X) && g[5] == S:
+	case (g[Tr] == X && g[Br] == X) && g[Mr] == S:
 		r = 5
 		fallthrough
-	case (g[5] == X && g[8] == X) && g[2] == S:
+	case (g[Mr] == X && g[Br] == X) && g[Tr] == S:
 		r = 2
 		fallthrough
 
 		// top left diag
-	case (g[0] == X && g[4] == X) && g[7] == S:
+	case (g[Tl] == X && g[Mc] == X) && g[Bc] == S:
 		r = 7
 		fallthrough
-	case (g[4] == X && g[7] == X) && g[0] == S:
+	case (g[Mc] == X && g[Bc] == X) && g[Tl] == S:
 		r = 0
 		fallthrough
-	case (g[0] == X && g[7] == X) && g[4] == S:
+	case (g[Tl] == X && g[Bc] == X) && g[Mc] == S:
 		r = 4
 		fallthrough
 
 		// top right diag
-	case (g[2] == X && g[4] == X) && g[6] == S:
+	case (g[Tr] == X && g[Mc] == X) && g[Bl] == S:
 		r = 6
 		fallthrough
-	case (g[2] == X && g[6] == X) && g[4] == S:
+	case (g[Tr] == X && g[Bl] == X) && g[Mc] == S:
 		r = 4
 		fallthrough
-	case (g[4] == X && g[6] == X) && g[2] == S:
+	case (g[Mc] == X && g[Bl] == X) && g[Tr] == S:
 		r = 2
 		fallthrough
 

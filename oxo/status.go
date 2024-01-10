@@ -14,28 +14,28 @@ func SetXwin(s string) GameState {
 	sb := []byte(s)
 	switch {
 
-	case (sb[0] == X && sb[1] == X && sb[2] == X): //top row
+	case (sb[Tl] == X && sb[Tc] == X && sb[Tr] == X): //top row
 		r = IsXwin
 		fallthrough
-	case sb[3] == X && sb[4] == X && sb[5] == X: //middle row
+	case sb[Ml] == X && sb[Mc] == X && sb[Mr] == X: //middle row
 		r = IsXwin
 		fallthrough
-	case sb[6] == X && sb[7] == X && sb[8] == X: //bottom row
+	case sb[Bl] == X && sb[Bc] == X && sb[Br] == X: //bottom row
 		r = IsXwin
 		fallthrough
-	case sb[0] == X && sb[3] == X && sb[6] == X: //first col
+	case sb[Tl] == X && sb[Ml] == X && sb[Bl] == X: //left col
 		r = IsXwin
 		fallthrough
-	case sb[1] == X && sb[4] == X && sb[7] == X: //second col
+	case sb[Tc] == X && sb[Mc] == X && sb[Bc] == X: //middle col
 		r = IsXwin
 		fallthrough
-	case sb[2] == X && sb[5] == X && sb[8] == X: //third col
+	case sb[Tr] == X && sb[Mr] == X && sb[Br] == X: //right col
 		r = IsXwin
 		fallthrough
-	case sb[0] == X && sb[4] == X && sb[8] == X: //left diag
+	case sb[Tl] == X && sb[Mc] == X && sb[Br] == X: //left diag
 		r = IsXwin
 		fallthrough
-	case sb[2] == X && sb[4] == X && sb[6] == X: //right diag
+	case sb[Tr] == X && sb[Mc] == X && sb[Bl] == X: //right diag
 		r = IsXwin
 
 	}
@@ -55,30 +55,32 @@ func SetOwin(s string) GameState {
 	//Convert to bytes to access the index
 	sb := []byte(s)
 	switch {
-	case sb[0] == O && sb[1] == O && sb[2] == O:
-		r = IsOwin
-		fallthrough
-	case sb[3] == O && sb[4] == O && sb[5] == O:
-		r = IsOwin
-		fallthrough
-	case sb[6] == O && sb[7] == O && sb[8] == O:
-		r = IsOwin
-		fallthrough
-	case sb[0] == O && sb[3] == O && sb[6] == O:
-		r = IsOwin
-		fallthrough
-	case sb[1] == O && sb[4] == O && sb[7] == O:
-		r = IsOwin
-		fallthrough
-	case sb[2] == O && sb[5] == O && sb[8] == O:
-		r = IsOwin
-		fallthrough
-	case sb[0] == O && sb[4] == O && sb[8] == O:
-		r = IsOwin
-		fallthrough
-	case sb[2] == O && sb[4] == O && sb[6] == O:
-		r = IsOwin
-	}
+
+		case (sb[Tl] == O && sb[Tc] == O && sb[Tr] == O): //top row
+			r = IsOwin
+			fallthrough
+		case sb[Ml] == O && sb[Mc] == O && sb[Mr] == O: //middle row
+			r = IsOwin
+			fallthrough
+		case sb[Bl] == O && sb[Bc] == O && sb[Br] == O: //bottom row
+			r = IsOwin
+			fallthrough
+		case sb[Tl] == O && sb[Ml] == O && sb[Bl] == O: //left col
+			r = IsOwin
+			fallthrough
+		case sb[Tc] == O && sb[Mc] == O && sb[Bc] == O: //middle col
+			r = IsOwin
+			fallthrough
+		case sb[Tr] == O && sb[Mr] == O && sb[Br] == O: //right col
+			r = IsOwin
+			fallthrough
+		case sb[Tl] == O && sb[Mc] == O && sb[Br] == O: //left diag
+			r = IsOwin
+			fallthrough
+		case sb[Tr] == O && sb[Mc] == O && sb[Bl] == O: //right diag
+			r = IsOwin
+	
+		}
 
 	return r
 }
