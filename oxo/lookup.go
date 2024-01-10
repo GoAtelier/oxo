@@ -5,8 +5,8 @@ func Newlookup() map[string]string {
 
 	//This is our big lookup table for all combinations of a 3 x 3 grid where each position contains either an X, O or space
 	//That is 3 to the power 9 = 19685 permutations
-	var def, ILLEGALlxop0000, ILLEGALlxoP0001, ILLEGALlxOp0010, ILLEGALlxOP0011, ILLEGALlXop0100, ILLEGALlXoP0101, ILLEGALlXOp0110, ILLEGALlXOP0111, DRAWLxop1000, PLAYLxoP1001, OWINLxOp1010, OWINLxOP1011, XWINLXop1100, XWINLXoP1101, ERRORLXOp1110, ERRORLXOP1111 int
-	//vars used as counters for testing.
+	var def int
+	// used as counter for testing.
 	gsl := make(map[string]string)
 
 	for p0 := 0; p0 < 3; p0++ {
@@ -32,8 +32,6 @@ func Newlookup() map[string]string {
 											//												c++
 											//											fmt.Printf("gs is [%08b] s = [%s] \n",gs,s)
 											//}
-											// The positional bits need to be shifted 4 bits to the to right to be used in a switch
-											// not needed gs = gs >> 4
 											// So we have sixteen different combinations of four states that a board can be in.
 											// Base on whether X or O has a winning line, the board is full or not and whether it is
 											// in a legal state ie. the max difference between the number of X's and O's is one
@@ -48,72 +46,54 @@ func Newlookup() map[string]string {
 											// board to a string the indicates its state.
 											//
 											//The result is game state lookup table (gsl) which will be used later in the game loop.
-											//Each clause has a counter for testing
-
-											switch gs {
-											case 0b00000000:
-												gsl[s] = "ILLEGAL"//-lxop0000"
-												ILLEGALlxop0000++
+											switch GameStateclass(gs) {
+											case Classlxop0000:
+												gsl[s] = "ILLEGAL" //-lxop0000"
 												break
-											case 0b00000001:
-												gsl[s] = "ILLEGAL"//-lxoP0001" //ILLEGAL
-												ILLEGALlxoP0001++
+											case ClasslxoP0001:
+												gsl[s] = "ILLEGAL" //-lxoP0001" //ILLEGAL
 												break
-											case 0b00000010:
-												gsl[s] = "ILLEGAL"//-lxOp0010" //ILLEGAL
-												ILLEGALlxOp0010++
+											case ClasslxOp0010:
+												gsl[s] = "ILLEGAL" //-lxOp0010" //ILLEGAL
 												break
-											case 0b00000011:
-												gsl[s] = "ILLEGAL"//-lxOP0011" //ILLEGAL
-												ILLEGALlxOP0011++
+											case ClasslxOP0011:
+												gsl[s] = "ILLEGAL" //-lxOP0011" //ILLEGAL
 												break
-											case 0b00000100:
-												gsl[s] = "ILLEGAL"//-lXop0100" //ILLEGAL
-												ILLEGALlXop0100++
+											case Classlxop0100:
+												gsl[s] = "ILLEGAL" //-lXop0100" //ILLEGAL
 												break
-											case 0b00000101:
-												gsl[s] = "ILLEGAL"//-lXoP0101" //ILLEGAL
-												ILLEGALlXoP0101++
+											case ClasslxoP0101:
+												gsl[s] = "ILLEGAL" //-lXoP0101" //ILLEGAL
 												break
-											case 0b00000110:
-												gsl[s] = "ILLEGAL"//-lXOp0110" //ILLEGAL
-												ILLEGALlXOp0110++
-											case 0b00000111:
-												gsl[s] = "ILLEGAL"//-lXOP0111" //ILLEGAL
-												ILLEGALlXOP0111++
+											case ClasslxOp0110:
+												gsl[s] = "ILLEGAL" //-lXOp0110" //ILLEGAL
+											case ClasslxOP0111:
+												gsl[s] = "ILLEGAL" //-lXOP0111" //ILLEGAL
 												break
-											case 0b00001000:
-												gsl[s] = "DRAW"//-Lxop1000" //DRAW  Legal board Neither O or X win and game is full
-												DRAWLxop1000++
+											case Classlxop1000:
+												gsl[s] = "DRAW" //-Lxop1000" //DRAW  Legal board Neither O or X win and game is full
 												break
-											case 0b00001001:
-												gsl[s] = "PLAY"//-LxoP1001" PLAY  Legal board Neither O or X win and game is in play
-												PLAYLxoP1001++
+											case ClasslxoP1001:
+												gsl[s] = "PLAY" //-LxoP1001" PLAY  Legal board Neither O or X win and game is in play
 												break
-											case 0b00001010:
-												gsl[s] = "OWIN"//-LxOp1010" OWIN  Legal board OWins and game is full
-												OWINLxOp1010++
+											case ClasslxOp1010:
+												gsl[s] = "OWIN" //-LxOp1010" OWIN  Legal board OWins and game is full
 												break
-											case 0b00001011:
-												gsl[s] = "OWIN"//-LxOP1011" OWIN  Legal board OWins and game is in play
-												OWINLxOP1011++
+											case ClasslxOP1011:
+												gsl[s] = "OWIN" //-LxOP1011" OWIN  Legal board OWins and game is in play
 												break
-											case 0b00001100:
-												gsl[s] = "XWIN"//-LXop1100" //XWIN  Legal board XWins and game is full
-												XWINLXop1100++
+											case Classlxop1100:
+												gsl[s] = "XWIN" //-LXop1100" //XWIN  Legal board XWins and game is full
 												break
-											case 0b00001101:
-												gsl[s] = "XWIN"//-LXoP1101" //XWIN  Legal board XWins and game is in play
-												XWINLXoP1101++
+											case ClasslxoP1101:
+												gsl[s] = "XWIN" //-LXoP1101" //XWIN  Legal board XWins and game is in play
 												break
-											case 0b00001110:
-												gsl[s] = "ERROR"//-LXOp1110" //ERROR Legal board but has both X AND O winning lines and is full
+											case ClasslxOp1110:
+												gsl[s] = "ERROR" //-LXOp1110" //ERROR Legal board but has both X AND O winning lines and is full
 												//In normal play one win will be detected for either O or X, there will be both!
-												ERRORLXOp1110++
 												break
-											case 0b00001111:
-												gsl[s] = "ERROR"//-LXOP1111" //ERROR Legal board has both X and O winning but is in play
-												ERRORLXOP1111++
+											case ClasslxOP1111:
+												gsl[s] = "ERROR" //-LXOP1111" //ERROR Legal board has both X and O winning but is in play
 												break
 											default:
 												def++
@@ -132,7 +112,7 @@ func Newlookup() map[string]string {
 		}
 
 	}
-	return gsl //a map of ["O O OXXXX"]"XWIN"
+	return gsl //gsl, game state lookup, is a map of string to string["O O OXXXX"]"XWIN"
 }
 
 // Used to build a string for the key to the lookup map

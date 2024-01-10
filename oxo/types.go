@@ -2,21 +2,19 @@
 
 package oxo
 
-import (
-	"math/rand"
-)
-type GameStateclass uint8 //Holds 16 permutations of 4 GameStates 
+type GameStateclass uint8 //Holds 16 permutations of 4 GameStates
 
 type GameState uint8 //Holds 4 GameStates OWIN,XWIN,INPLAY and LEGAL
 
-//These are the 4 GameStates, a Board can have multiple GameStates 
+// These are the 4 GameStates, a Board can have multiple GameStates
 const (
 	IsInplay GameState = 1 << iota
 	IsOwin
 	IsXwin
 	IsLegal
 )
-//These are all 16 permutations of 4 GameStates so there are NO overlaps.  Any board is in only one of these.
+
+// These are all 16 permutations of 4 GameStates so there are NO overlaps.  Any board is in only one of these.
 const (
 	Classlxop0000 GameStateclass = iota //ILLEGAL
 	ClasslxoP0001                       //ILLEGAL
@@ -34,6 +32,11 @@ const (
 	ClasslxoP1101                       //XWIN  Legal board XWins and game is in play
 	ClasslxOp1110                       //ERROR Legal board but has both X AND O winning lines and is full. Error because one should be detected first.
 	ClasslxOP1111                       //ERROR Legal board but has both X and O winning line and is in play.  Error because one should be detected first.
+)
+const (
+	X = byte(88)
+	O = byte(79)
+	S = byte(32)
 )
 
 // board represents the state of a turn of the game on a 3 x 3 grid
@@ -57,7 +60,7 @@ type Game struct {
 func (board Grid) FindSpaces() ([]byte, bool) {
 	var spc []byte
 	for k, v := range board {
-		if v == 32 {
+		if v == S {
 			spc = append(spc, byte(k))
 		}
 	}
@@ -66,24 +69,6 @@ func (board Grid) FindSpaces() ([]byte, bool) {
 
 type Player struct {
 	Name   string
-	Tactic func(Grid) int
+	Tactic func(Grid) int //Tactic function for this player.
 	Rank   int
-}
-
-
-
-
-
-
-
-// Random is a tactic returning an int that is its chosen location on the grid
-// Findspaces finds the spaces on the Grid and Random choses one....randomly
-func Random(g Grid) int {
-	spc, _ := g.FindSpaces()
-	return int(spc[randInt(0, len(spc))])
-}
-
-// randInt choses a random number between two values
-func randInt(min, max int) int {
-	return min + rand.Intn(max-min)
 }
