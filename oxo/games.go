@@ -1,5 +1,8 @@
 package oxo
 
+import (
+	"math/rand"
+)
 
 /*  Setting up a game.
 
@@ -23,7 +26,15 @@ It will be later expanded to become a command line program that will accept conf
 
 // Game is the highest level data structure.  Players, Boards and Turns are embedded fields.
 
-func Playgame(findstate Lookup, Op, Xp Player) Game {
+func TossCoin() bool {
+// Used even out any advantage to going first
+	if flipint := rand.Intn(2); flipint == 0 {
+		return true
+	}
+	return false
+}
+
+func Playgame(findstate Lookup, Op, Xp Player, tosscoin bool) Game {
 	var g Game
 	g.O.Tactic = Op.Tactic
 	g.X.Tactic = Xp.Tactic
@@ -32,22 +43,37 @@ func Playgame(findstate Lookup, Op, Xp Player) Game {
 	g.Turns = append(g.Turns, Turn{Board: Grid([]byte("         "))})
 
 	// Now we need to find the state of the Game at any turn.  Do this by using the lookup table calculated in status.go
-	
-	// flip between O and X
+
+	// flip between O and X at every turn
 	var flip bool
+	// Who goes first? toss once at beginning of game
+
 	// Game loop.  It is never going to be more than 9 turns.  A minimum Game is 5 Turns
 	// Note that X goes first by default.
 	// This might give an advantage and so we should make this configurable later.
 
 	for turn := 0; turn < 9; turn++ {
 
-		if flip {
-			pos := g.O.Tactic(g.Turns[turn].Board) //uses the Tactic function to obtain an integer between 0 and 8
-			g.Turns[turn].Board[pos] = O       //O updates the Board for this Turn
+		if tosscoin {
+			if flip {
+				pos := g.O.Tactic(g.Turns[turn].Board) //uses the Tactic function to obtain an integer between 0 and 8
+				g.Turns[turn].Board[pos] = O           //O updates the Board for this Turn
 
+			} else {
+				pos := g.X.Tactic(g.Turns[turn].Board)
+				g.Turns[turn].Board[pos] = X
+			}
 		} else {
-			pos := g.X.Tactic(g.Turns[turn].Board)
-			g.Turns[turn].Board[pos] = X
+			if flip {
+				pos := g.X.Tactic(g.Turns[turn].Board)
+				g.Turns[turn].Board[pos] = X
+
+			} else {
+				pos := g.O.Tactic(g.Turns[turn].Board) //uses the Tactic function to obtain an integer between 0 and 8
+				g.Turns[turn].Board[pos] = O           //O updates the Board for this Turn
+
+			}
+
 		}
 
 		//Convert the Board, which is a 9 byte array into a slice and into a string
@@ -60,6 +86,7 @@ func Playgame(findstate Lookup, Op, Xp Player) Game {
 		g.Turns[turn].Status = findstate[g.Turns[turn].Board.Grid2string()]
 		//If the Status is not in Play, the Game is over and we exit the loop
 		if g.Turns[turn].Status != "PLAY" {
+			g.Result = g.Turns[turn].Status
 			break
 		}
 		// Otherwise we append another Turn to the Game Turn slice
@@ -68,5 +95,6 @@ func Playgame(findstate Lookup, Op, Xp Player) Game {
 		flip = !flip
 		// The loop around
 	}
+
 	return g
 }
