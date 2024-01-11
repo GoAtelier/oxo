@@ -77,17 +77,30 @@ type Game struct {
 	Result string
 }
 
-type Result struct {
-	Games []Game
+type Group struct {
+	Games    []Game
+	NumOwins int
+	NumXwins int
+	NumDraws int
+	NumTurns int
+}
+
+func (r *Group) UpdateNums(g Game) {
+	switch {
+	case g.Result == "XWIN":
+		r.NumXwins++
+	case g.Result == "OWIN":
+		r.NumOwins++
+	case g.Result == "DRAW":
+		r.NumDraws++
+	}
+	r.NumTurns = len(g.Turns)
+	return
 }
 
 type Lookup map[string]string
 
 type Tacticfunc func(Grid) int
-
-
-
-
 
 func (board Grid) FindSpaces() ([]byte, bool) {
 	var spc []byte
@@ -98,4 +111,3 @@ func (board Grid) FindSpaces() ([]byte, bool) {
 	}
 	return spc, len(spc) != 0
 }
-
