@@ -1,10 +1,7 @@
 package oxo
 
-import (
-	"math/rand"
-)
-
-/*  Setting up a game.
+/*
+	Setting up a game.
 
 A Game contains a slice of Turns. A Turn contains the 3 x 3 board in Grid.
 We need to configure Player X and O each with a Tactic function.
@@ -21,20 +18,18 @@ This is a standalone program.
 
 It will be later expanded to become a command line program that will accept configuration.
 
-
-*/
-
 // Game is the highest level data structure.  Players, Boards and Turns are embedded fields.
 
 func TossCoin() bool {
 // Used even out any advantage to going first
-	if flipint := rand.Intn(2); flipint == 0 {
-		return true
-	}
-	return false
-}
 
-func Playgame(findstate Lookup, Op, Xp Player, tosscoin bool) Game {
+		if flipint := rand.Intn(2); flipint == 0 {
+			return true
+		}
+		return false
+	}
+*/
+func Playgame(findstate Lookup, Op, Xp Player, whostarts bool) Game {
 	var g Game
 	g.O.Tactic = Op.Tactic
 	g.X.Tactic = Xp.Tactic
@@ -46,7 +41,6 @@ func Playgame(findstate Lookup, Op, Xp Player, tosscoin bool) Game {
 
 	// flip between O and X at every turn
 	var flip bool
-	// Who goes first? toss once at beginning of game
 
 	// Game loop.  It is never going to be more than 9 turns.  A minimum Game is 5 Turns
 	// Note that X goes first by default.
@@ -54,7 +48,7 @@ func Playgame(findstate Lookup, Op, Xp Player, tosscoin bool) Game {
 
 	for turn := 0; turn < 9; turn++ {
 
-		if tosscoin {
+		if whostarts { //This alternates after every game
 			if flip {
 				pos := g.O.Tactic(g.Turns[turn].Board) //uses the Tactic function to obtain an integer between 0 and 8
 				g.Turns[turn].Board[pos] = O           //O updates the Board for this Turn
