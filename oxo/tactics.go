@@ -3,7 +3,6 @@ package oxo
 import (
 	"math/rand"
 )
-
 // Random is a tactic returning an int that is its chosen location on the grid
 // Findspaces finds the spaces on the Grid and Random choses one....randomly
 func Random(g Grid) int {

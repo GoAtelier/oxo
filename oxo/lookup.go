@@ -1,5 +1,6 @@
 package oxo
 
+
 // Newlookup returns a lookup table that has a 9 character string as key that represents the OXO board and value string that indicates its state
 func Newlookup() map[string]string {
 
@@ -126,4 +127,15 @@ func convert(j int) string {
 		return " "
 	}
 	return "?"
+}
+
+//This will be used for creating a Player from a command line string flag 
+func NewPlayerlookup() map[string]Player {
+	pl := make(map[string]Player)
+	pl["RANDOM"]=Player{Name: "RANDOM", Tactic: Random, Rank: 0}
+    pl["CORNER"]=Player{Name: "CORNER", Tactic: Corner, Rank: 0}
+    pl["CENTRE"]=Player{Name: "CENTRE", Tactic: Centre, Rank: 0}
+	pl["COMPLETEXLINE"]=Player{Name: "COMPLETEXLINE", Tactic: CompleteXLine, Rank: 0}
+	pl["COMPLETEOLINE"]=Player{Name: "COMPLETEOLINE", Tactic: CompleteOLine, Rank: 0}
+	return pl
 }

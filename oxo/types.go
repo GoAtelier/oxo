@@ -82,6 +82,7 @@ type Group struct {
 	NumOwins int
 	NumXwins int
 	NumDraws int
+	NumIllegals int
 	NumTurns int
 }
 
@@ -93,6 +94,8 @@ func (r *Group) UpdateNums(g Game) {
 		r.NumOwins++
 	case g.Result == "DRAW":
 		r.NumDraws++
+	case g.Result == "ILLEGAL":
+		r.NumIllegals++
 	}
 	r.NumTurns = len(g.Turns)
 	return
