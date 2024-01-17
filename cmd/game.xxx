@@ -1,0 +1,60 @@
+/*
+Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+*/
+package cmd
+
+import (
+	"fmt"
+	//	"strconv"
+
+	//	"github.com/finecoding/oxo-1/oxo"
+	"github.com/spf13/cobra"
+)
+
+var intp int
+
+// gameCmd represents the game command
+var gameCmd = &cobra.Command{
+	Use:   "game",
+	Short: "Enter a number of games to play",
+	Long:  `This assumes player RANDOM v player RANDOM`,
+	Args:  cobra.ExactArgs(1),
+	Run:   flagsFunc,
+}
+
+func flagsFunc(cmd *cobra.Command, args []string) {
+	fmt.Println("p = ", intp)
+
+}
+
+/* 		nl := oxo.Newlookup()
+
+//Now to add these to a new data structure, a Result, which will be a slice of Games.
+
+reps, _ := strconv.Atoi(args[0])
+var res oxo.Group
+var flipwhostarts bool
+
+for i := 0; i < reps; i++ {
+	flipwhostarts = !flipwhostarts                         //alternates who starts the game eliminating any first mover advantage
+	OPlayer := oxo.Player{"RANDOM", oxo.Corner, 0}         //Setup O
+	XPlayer := oxo.Player{"RANDOM", oxo.Random, 0}         //Setup X
+	x := oxo.Playgame(nl, OPlayer, XPlayer, flipwhostarts) //PlayGame, toss coin to decide who goes first...
+	res.Games = append(res.Games, x)                       //Add Game to res slice.
+	res.UpdateNums(x)
+	fmt.Println(res.Games[i]) */
+
+func init() {
+	//rootCmd.AddCommand(gameCmd)
+
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// gameCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// gameCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
