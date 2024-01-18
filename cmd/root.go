@@ -6,22 +6,27 @@ package cmd
 import (
 	"fmt"
 	"os"
+
 	"github.com/finecoding/oxo-1/oxo"
 	"github.com/spf13/cobra"
-	
 )
 
-var reps int
+var numgames int //Command line flags will be stored in these variables
 var oplayer, xplayer string
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use: "oxocli",
 
 	Short: "Utility to experiment with a simulation of the game of Noughts and Crosses (aka Tic Tac Toe)",
-	Long:  `Enter two players and the number of games to play`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Long: `This accepts flags for the 
+	number of games to be played Example: -n 10, 
+	tactic used by O Example: -o RANDOM
+	tactic used by X Example: -x RANDOM
+	The tactics available are RANDOM, CENTRE, CORNER, COMPLETEXLINE and COMPLETEOLINE
+	Example:
+	oxocli -n 10 -o RANDOM -x CENTRE
+	The default values are -n 1 -o RANDOM -x RANDOM`,
 	Run: flagsFunc,
 }
 
@@ -35,47 +40,34 @@ func Execute() {
 }
 
 func flagsFunc(cmd *cobra.Command, args []string) {
-//	fmt.Printf("p = %d\n", reps)
-//	fmt.Println("args:", args)
-	nl := oxo.Newlookup()
+	nl := oxo.Newlookup()										//The state looktable that maps a string representation of a board with its state
 
-//Now to add these to a new data structure, a Result, which will be a slice of Games.
+	var res oxo.Group											//Group is a slice of Games, it will hold all the Game records
+	var flipwhostarts bool									
 
-var res oxo.Group
-var flipwhostarts bool
+	playerlookup := oxo.NewPlayerlookup()						//playerlookup is a map of strings to predefined Players.
 
-playerlookup:=oxo.NewPlayerlookup()
+	for i := 0; i < numgames; i++ {									//repeats the number of times specified by the command line -n	
+		flipwhostarts = !flipwhostarts                         	//alternates who starts the game eliminating any first mover advantage
+		OPlayer := playerlookup[oplayer]                       	//Setup O. Lookup the string entered at the command line following -o to find the Player
+		XPlayer := playerlookup[xplayer]                       	//Setup X. Lookup the string entered at the command line following -x to find the player
+		x := oxo.Playgame(nl, OPlayer, XPlayer, flipwhostarts) 	//PlayGame, with two Players, they will take turns starting each game to eliminate any advantage
+		res.Games = append(res.Games, x)                       	//The completed Game is added to the Games slice.
+		res.UpdateNums(x)									   	//Update some basic statistics about each game  
+		fmt.Println(res.Games[i])							   	//Print the game across the screen.....we need a flag for this!
 
+	}
 
-for i := 0; i < reps; i++ {
-	flipwhostarts = !flipwhostarts           //alternates who starts the game eliminating any first mover advantage
-	OPlayer := playerlookup[oplayer]        //Setup O looksup the string entered at the command line for -o to finds the player 
-	XPlayer := playerlookup[xplayer]        //Setup X looksup the string entered at the command line for -x to finds the player 
-	x := oxo.Playgame(nl, OPlayer, XPlayer, flipwhostarts) //PlayGame, toss coin to decide who goes first...
-	res.Games = append(res.Games, x)                       //Add Game to res slice.
-	res.UpdateNums(x)
-	fmt.Println(res.Games[i]) 
-
-}	
-
-fmt.Printf("Printed %d games\n\n",reps)
-fmt.Printf(" Number of XWINS = %d\n", res.NumXwins)
-fmt.Printf(" Number of OWINS = %d\n", res.NumOwins)
-fmt.Printf(" Number of DRAWS = %d\n", res.NumDraws)
-fmt.Printf(" Number of ILLEGALS = %d\n", res.NumIllegals)
+	fmt.Printf("Printed %d games\n\n", numgames)					//Print some stats about all the games played.
+	fmt.Printf(" Number of XWINS = %d\n", res.NumXwins)
+	fmt.Printf(" Number of OWINS = %d\n", res.NumOwins)
+	fmt.Printf(" Number of DRAWS = %d\n", res.NumDraws)
+	fmt.Printf(" Number of ILLEGALS = %d\n", res.NumIllegals)
 
 }
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.oxo-1.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().IntVarP(&reps, "numgames", "n", 1, "number of games to play")
+	//Obtaining flags from the Command line.
+	rootCmd.Flags().IntVarP(&numgames, "numgames", "n", 1, "number of games to play")
 	rootCmd.Flags().StringVarP(&oplayer, "oplayer", "o", "RANDOM", "O player,  select a tactic RANDOM, CENTRE. CORNER....")
 	rootCmd.Flags().StringVarP(&xplayer, "xplayer", "x", "RANDOM", "X player. select a tactic RANDOM, CENTRE. CORNER....")
-	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -52,7 +52,6 @@ func Playgame(findstate Lookup, Op, Xp Player, whostarts bool) Game {
 			if flip {
 				pos := g.O.Tactic(g.Turns[turn].Board) //uses the Tactic function to obtain an integer between 0 and 8
 				g.Turns[turn].Board[pos] = O           //O updates the Board for this Turn
-
 			} else {
 				pos := g.X.Tactic(g.Turns[turn].Board)
 				g.Turns[turn].Board[pos] = X

@@ -3,6 +3,7 @@ package oxo
 import (
 	"math/rand"
 )
+
 // Random is a tactic returning an int that is its chosen location on the grid
 // Findspaces finds the spaces on the Grid and Random choses one....randomly
 func Random(g Grid) int {
@@ -23,7 +24,8 @@ func Centre(g Grid) int {
 		return Random(g)
 	}
 }
-//Note the use of constants for grid positions in the 3 x 3 board.  Tl=Topright=0, Tc=Topcentre=1, Tr=Topright=2....see types.go 
+
+// Note the use of constants for grid positions in the 3 x 3 board.  Tl=Topright=0, Tc=Topcentre=1, Tr=Topright=2....see types.go
 // Corner tactic selects any vacant corner otherwise it randomly selects any other empty location
 func Corner(g Grid) int {
 
@@ -46,7 +48,7 @@ func Corner(g Grid) int {
 
 }
 func CompleteOLine(g Grid) int {
-    r:=9
+	r := 9
 	switch {
 	//top row
 	case (g[Tl] == O && g[Tc] == O) && g[Tr] == S:
@@ -134,15 +136,15 @@ func CompleteOLine(g Grid) int {
 		fallthrough
 	case (g[Mc] == O && g[Bl] == O) && g[Tr] == S:
 		r = 2
-
+		fallthrough
 	default:
 		r = Random(g)
 	}
-return r
+	return r
 	// /
 }
 func CompleteXLine(g Grid) int {
-	r:=9
+	r := 9
 	switch {
 	//top row
 	case (g[Tl] == X && g[Tc] == X) && g[Tr] == S:
