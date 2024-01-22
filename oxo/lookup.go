@@ -63,6 +63,8 @@ func Newlookup() map[string]string {
 		}
 
 	}
+	//This would be a good place to check for errors
+	//Should be 19683 entries....what others?  
 	return gsl //gsl, game state lookup, is a map of string to string["O O OXXXX"]"XWIN"
 }
 
@@ -95,7 +97,11 @@ func NewPlayerlookup() map[string]Player {
 //It then returns an appropriate state string.
 
 func ClassifyGamestate(gs GameState) string {
-
+//Q.  Can we predict what the numbers should be of each category to check for errors?
+//We can write some tests.  Range through the lookup table and with this function?
+//Need to extract a subset that has a clear outcome.   Eg.  If the 9 spaces are all taken
+//with O or X, that is 2 to the power 9 = 512.  Some of which will be illegal, some errors
+//and some x win or o win or draw.  Can we predict how many of each?
 	switch GameStateclass(gs) {
 	case Classlxop0000:
 		return "ILLEGAL" //-lxop0000"
@@ -151,58 +157,3 @@ func ClassifyGamestate(gs GameState) string {
 	}
 	return ""
 }
-
-/*
-switch GameStateclass(gs) {
-case Classlxop0000:
-	gsl[s] = "ILLEGAL" //-lxop0000"
-	break
-case ClasslxoP0001:
-	gsl[s] = "ILLEGAL" //-lxoP0001" //ILLEGAL
-	break
-case ClasslxOp0010:
-	gsl[s] = "ILLEGAL" //-lxOp0010" //ILLEGAL
-	break
-case ClasslxOP0011:
-	gsl[s] = "ILLEGAL" //-lxOP0011" //ILLEGAL
-	break
-case Classlxop0100:
-	gsl[s] = "ILLEGAL" //-lXop0100" //ILLEGAL
-	break
-case ClasslxoP0101:
-	gsl[s] = "ILLEGAL" //-lXoP0101" //ILLEGAL
-	break
-case ClasslxOp0110:
-	gsl[s] = "ILLEGAL" //-lXOp0110" //ILLEGAL
-case ClasslxOP0111:
-	gsl[s] = "ILLEGAL" //-lXOP0111" //ILLEGAL
-	break
-case Classlxop1000:
-	gsl[s] = "DRAW" //-Lxop1000" //DRAW  Legal board Neither O or X win and game is full
-	break
-case ClasslxoP1001:
-	gsl[s] = "PLAY" //-LxoP1001" PLAY  Legal board Neither O or X win and game is in play
-	break
-case ClasslxOp1010:
-	gsl[s] = "OWIN" //-LxOp1010" OWIN  Legal board OWins and game is full
-	break
-case ClasslxOP1011:
-	gsl[s] = "OWIN" //-LxOP1011" OWIN  Legal board OWins and game is in play
-	break
-case Classlxop1100:
-	gsl[s] = "XWIN" //-LXop1100" //XWIN  Legal board XWins and game is full
-	break
-case ClasslxoP1101:
-	gsl[s] = "XWIN" //-LXoP1101" //XWIN  Legal board XWins and game is in play
-	break
-case ClasslxOp1110:
-	gsl[s] = "ERROR" //-LXOp1110" //ERROR Legal board but has both X AND O winning lines and is full
-	//In normal play one win will be detected for either O or X, there will be both!
-	break
-case ClasslxOP1111:
-	gsl[s] = "ERROR" //-LXOP1111" //ERROR Legal board has both X and O winning but is in play
-	break
-default:
-	def++
-
-} */

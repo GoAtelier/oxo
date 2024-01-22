@@ -56,7 +56,7 @@ const (
 
 type Player struct {
 	Name   string
-	Tactic func(Grid) int //Tactic function for this player.
+	Tactic func(Grid) int `json:"-"`//Tactic function for this player.
 	Rank   int
 }
 
