@@ -11,6 +11,8 @@ import (
 	"os"
 	"slices"
 
+	"github.com/finecoding/oxo-1/cmd/file"
+	"github.com/finecoding/oxo-1/cmd/print"
 	"github.com/finecoding/oxo-1/oxo"
 	"github.com/spf13/cobra"
 )
@@ -71,6 +73,7 @@ func flagsFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	defer logfile.Close()
+
 	log.SetOutput(logfile)
 	log.Println("Starting the application...")
 
@@ -111,6 +114,10 @@ func flagsFunc(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
+func addSubcommand() {
+	rootCmd.AddCommand(file.FileCmd)
+	rootCmd.AddCommand(print.PrintCmd)
+}
 func init() {
 	//Obtaining flags from the Command line.
 	rootCmd.Flags().BoolVarP(&printonscreen, "printonscreen", "p", false, "print games on terminal")
@@ -118,4 +125,5 @@ func init() {
 	rootCmd.Flags().IntVarP(&numgames, "numgames", "n", 1, "number of games to play")
 	rootCmd.Flags().StringVarP(&oplayer, "oplayer", "o", "RANDOM", "O player,  select a tactic RANDOM, CENTRE, CORNER,COMPLETEXLINE,COMPLETOLINE")
 	rootCmd.Flags().StringVarP(&xplayer, "xplayer", "x", "RANDOM", "X player. select a tactic RANDOM, CENTRE, CORNER, COMPLETEXLINE,COMPLETOLINE")
+	addSubcommand()
 }
