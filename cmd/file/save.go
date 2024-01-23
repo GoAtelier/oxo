@@ -38,6 +38,8 @@ to quickly create a Cobra application.`,
 
 		fmt.Println("File created successfully:", filename)
 
+
+		
 	},
 }
 var filename string

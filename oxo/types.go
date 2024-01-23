@@ -55,35 +55,35 @@ const (
 // board represents the state of a turn of the game on a 3 x 3 grid
 
 type Player struct {
-	Name   string
-	Tactic func(Grid) int `json:"-"`//Tactic function for this player.
-	Rank   int
+	Name   string         `json:"name"`
+	Tactic func(Grid) int `json:"-"` //Tactic function for this player.
+	Rank   int            `json:"rank"`
 }
 
 type Grid [9]byte
 
 // a turn has a board and status string which will be one of these strings XWIN,OWIN,DRAW,PLAY
 type Turn struct {
-	Board  Grid
-	Status string
+	Board  Grid   `json:"grid"`
+	Status string `json:"status"`
 }
 
 // a complete game has a minimum of 5 turns and a maximum of 9 turns
 // should I set a capacity for the slice?
 type Game struct {
-	Turns  []Turn
-	X      Player
-	O      Player
-	Result string
+	X      Player `json:"xplayer"`
+	O      Player `json:"oplayer"`
+	Result string `json:"result"`
+	Turns  []Turn `json:"turn"`
 }
 
 type Group struct {
-	Games    []Game
-	NumOwins int
-	NumXwins int
-	NumDraws int
-	NumIllegals int
-	NumTurns int
+	Games       []Game `json:"games"`
+	NumOwins    int    `json:"numowins"`
+	NumXwins    int    `json:"numxwins"`
+	NumDraws    int    `json:"draws"`
+	NumIllegals int    `json:"illegals"`
+	NumTurns    int    `json:"numturns"`
 }
 
 func (r *Group) UpdateNums(g Game) {
